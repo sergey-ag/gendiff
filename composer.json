@@ -1,0 +1,19 @@
+{
+    "name": "craftworks/gendiff",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Sergey Kravchenko",
+            "email": "sergey@craftworks.ru"
+        }
+    ],
+    "bin": ["bin/gendiff"],
+    "scripts": {
+        "phpcs": "phpcs"
+    },
+    "require": {
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.2"
+    }
+}
