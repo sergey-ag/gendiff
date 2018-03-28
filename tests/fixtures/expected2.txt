@@ -1,0 +1,11 @@
+{
+  + id: 3
+  - id: 1
+    name: Foo
+  - price: 123
+  + warehouse: 297
+  - warehouse: 300
+  + available: true
+  - available: false
+  + retail: 20
+}

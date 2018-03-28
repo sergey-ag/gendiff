@@ -24,3 +24,7 @@ Options:
 
 DOC;
 $handler = (new \Docopt\Handler)->handle($doc);
+$format = $handler->args['--format'];
+$firstFile = $handler->args['<firstFile>'];
+$secondFile = $handler->args['<secondFile>'];
+print_r(\Craftworks\GenDiff\diff($format, $firstFile, $secondFile));
