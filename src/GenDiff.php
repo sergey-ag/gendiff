@@ -2,14 +2,27 @@
 
 namespace Craftworks\GenDiff;
 
+use Symfony\Component\Yaml\Yaml;
+
 function diff($format, $firstFile, $secondFile)
 {
     $file1 = file_get_contents($firstFile);
     $file2 = file_get_contents($secondFile);
-    $data1 = json_decode($file1);
-    $data2 = json_decode($file2);
+    $parser = __NAMESPACE__ . '\\' . pathinfo($firstFile, PATHINFO_EXTENSION) . 'Parse';
+    $data1 = $parser($file1);
+    $data2 = $parser($file2);
     $tree = build($data1, $data2);
     return render($tree);
+}
+
+function jsonParse($json)
+{
+    return json_decode($json);
+}
+
+function ymlParse($yaml)
+{
+    return Yaml::parse($yaml, Yaml::PARSE_OBJECT_FOR_MAP);
 }
 
 function build($data1, $data2)

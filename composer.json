@@ -23,7 +23,8 @@
     },
     "require": {
         "docopt/docopt": "^1.0",
-        "funct/funct": "^1.4"
+        "funct/funct": "^1.4",
+        "symfony/yaml": "^3.4"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.2",

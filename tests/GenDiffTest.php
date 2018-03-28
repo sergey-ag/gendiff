@@ -18,5 +18,10 @@ class GenDiffTest extends \PHPUnit\Framework\TestCase
             'tests/fixtures/before2.json',
             'tests/fixtures/after2.json'
         ), $expected2);
+        $this->assertEquals(\Craftworks\GenDiff\diff(
+            'pretty',
+            'tests/fixtures/before2.yml',
+            'tests/fixtures/after2.yml'
+        ), $expected2);
     }
 }
