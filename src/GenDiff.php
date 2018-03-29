@@ -51,56 +51,52 @@ function boolToString($array)
 function getNode($key, $data1, $data2)
 {
     if (!key_exists($key, $data1)) {
-        return [
-            'type' => 'added',
-            'key' => $key,
-            'afterValue' => $data2[$key]
-        ];
+        return ['type' => 'added', 'key' => $key,
+                'afterValue' => is_object($data2[$key]) ? buildDiff($data2[$key], $data2[$key]) : $data2[$key]];
     }
     if (!key_exists($key, $data2)) {
-        return [
-            'type' => 'removed',
-            'key' => $key,
-            'beforeValue' => $data1[$key]
-        ];
+        return ['type' => 'removed', 'key' => $key,
+                'beforeValue' => is_object($data1[$key]) ? buildDiff($data1[$key], $data1[$key]) : $data1[$key]];
+    }
+    if (is_object($data1[$key]) && is_object($data2[$key])) {
+        return ['type' => 'nested', 'key' => $key, 'afterValue' => buildDiff($data1[$key], $data2[$key])];
     }
     if ($data1[$key] === $data2[$key]) {
-        return [
-            'type' => 'equal',
-            'key' => $key,
-            'beforeValue' => $data1[$key],
-            'afterValue' => $data2[$key]
-        ];
+        return ['type' => 'equal', 'key' => $key, 'afterValue' => $data2[$key]];
     }
-    return [
-        'type' => 'changed',
-        'key' => $key,
-        'beforeValue' => $data1[$key],
-        'afterValue' => $data2[$key]
-    ];
+    return ['type' => 'changed', 'key' => $key,
+            'beforeValue' => is_object($data1[$key]) ? buildDiff($data1[$key], $data1[$key]) : $data1[$key],
+            'afterValue' => is_object($data2[$key]) ? buildDiff($data2[$key], $data2[$key]) : $data2[$key]];
 }
 
-function render($tree)
+function render($tree, $depth = 0)
 {
     $result = $tree
         ->map(function ($node) {
             return renderNode($node);
         })
-        ->flatten()
+        ->flatten(1)
+        ->map(function ($renderedNode) use ($depth) {
+            list($flag, $key, $value) = $renderedNode;
+            $indent = 3 + $depth * 4;
+            return sprintf("% {$indent}s %s: %s", $flag, $key, is_object($value) ? render($value, $depth + 1) : $value);
+        })
         ->all();
-    return "{\n" . implode("\n", $result) . "\n}\n";
+    return "{\n" . implode("\n", $result) . "\n" . str_repeat(' ', $depth * 4) . "}";
 }
 
 function renderNode($node)
 {
     switch ($node['type']) {
         case 'added':
-            return ["  + {$node['key']}: {$node['afterValue']}"];
+            return [['+', $node['key'], $node['afterValue']]];
         case 'removed':
-            return ["  - {$node['key']}: {$node['beforeValue']}"];
+            return [['-', $node['key'], $node['beforeValue']]];
+        case 'nested':
+            return [['', $node['key'], $node['afterValue']]];
         case 'equal':
-            return ["    {$node['key']}: {$node['beforeValue']}"];
+            return [['', $node['key'], $node['afterValue']]];
     }
-    return ["  + {$node['key']}: {$node['afterValue']}",
-           "  - {$node['key']}: {$node['beforeValue']}"];
+    return [['+', $node['key'], $node['afterValue']],
+            ['-', $node['key'], $node['beforeValue']]];
 }

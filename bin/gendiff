@@ -28,3 +28,4 @@ $format = $handler->args['--format'];
 $firstFile = $handler->args['<firstFile>'];
 $secondFile = $handler->args['<secondFile>'];
 echo \Craftworks\GenDiff\compare($firstFile, $secondFile, $format);
+echo PHP_EOL;
