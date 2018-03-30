@@ -21,7 +21,9 @@ function compare($firstFile, $secondFile, $format = 'pretty')
     $data1 = $parse[$inputFormat]($file1);
     $data2 = $parse[$inputFormat]($file2);
     $tree = buildDiff($data1, $data2);
-    return render($tree);
+    $render = ['pretty' => '\\Craftworks\\GenDiff\\Pretty\\render',
+               'plain' => '\\Craftworks\\GenDiff\\Plain\\render'];
+    return $render[$format]($tree);
 }
 
 function buildDiff($data1, $data2)
@@ -52,11 +54,11 @@ function getNode($key, $data1, $data2)
 {
     if (!key_exists($key, $data1)) {
         return ['type' => 'added', 'key' => $key,
-                'afterValue' => is_object($data2[$key]) ? buildDiff($data2[$key], $data2[$key]) : $data2[$key]];
+                'afterValue' => getNodeValue($data2[$key])];
     }
     if (!key_exists($key, $data2)) {
         return ['type' => 'removed', 'key' => $key,
-                'beforeValue' => is_object($data1[$key]) ? buildDiff($data1[$key], $data1[$key]) : $data1[$key]];
+                'beforeValue' => getNodeValue($data1[$key])];
     }
     if (is_object($data1[$key]) && is_object($data2[$key])) {
         return ['type' => 'nested', 'key' => $key, 'afterValue' => buildDiff($data1[$key], $data2[$key])];
@@ -65,38 +67,11 @@ function getNode($key, $data1, $data2)
         return ['type' => 'equal', 'key' => $key, 'afterValue' => $data2[$key]];
     }
     return ['type' => 'changed', 'key' => $key,
-            'beforeValue' => is_object($data1[$key]) ? buildDiff($data1[$key], $data1[$key]) : $data1[$key],
-            'afterValue' => is_object($data2[$key]) ? buildDiff($data2[$key], $data2[$key]) : $data2[$key]];
+            'beforeValue' => getNodeValue($data1[$key]),
+            'afterValue' => getNodeValue($data2[$key])];
 }
 
-function render($tree, $depth = 0)
+function getNodeValue($value)
 {
-    $result = $tree
-        ->map(function ($node) {
-            return renderNode($node);
-        })
-        ->flatten(1)
-        ->map(function ($renderedNode) use ($depth) {
-            list($flag, $key, $value) = $renderedNode;
-            $indent = 3 + $depth * 4;
-            return sprintf("% {$indent}s %s: %s", $flag, $key, is_object($value) ? render($value, $depth + 1) : $value);
-        })
-        ->all();
-    return "{\n" . implode("\n", $result) . "\n" . str_repeat(' ', $depth * 4) . "}";
-}
-
-function renderNode($node)
-{
-    switch ($node['type']) {
-        case 'added':
-            return [['+', $node['key'], $node['afterValue']]];
-        case 'removed':
-            return [['-', $node['key'], $node['beforeValue']]];
-        case 'nested':
-            return [['', $node['key'], $node['afterValue']]];
-        case 'equal':
-            return [['', $node['key'], $node['afterValue']]];
-    }
-    return [['+', $node['key'], $node['afterValue']],
-            ['-', $node['key'], $node['beforeValue']]];
+    return is_object($value) ? buildDiff($value, $value) : $value;
 }

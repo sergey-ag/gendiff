@@ -15,7 +15,9 @@
     },
     "autoload": {
         "files": [
-            "src/GenDiff.php"
+            "src/GenDiff.php",
+            "src/Pretty.php",
+            "src/Plain.php"
         ],
         "psr-4": {
             "Craftworks\\GenDiff\\Tests\\": "tests"
