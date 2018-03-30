@@ -22,7 +22,8 @@ function compare($firstFile, $secondFile, $format = 'pretty')
     $data2 = $parse[$inputFormat]($file2);
     $tree = buildDiff($data1, $data2);
     $render = ['pretty' => '\\Craftworks\\GenDiff\\Pretty\\render',
-               'plain' => '\\Craftworks\\GenDiff\\Plain\\render'];
+               'plain' => '\\Craftworks\\GenDiff\\Plain\\render',
+               'json' => '\\Craftworks\\GenDiff\\Json\\render'];
     return $render[$format]($tree);
 }
 

@@ -17,7 +17,8 @@
         "files": [
             "src/GenDiff.php",
             "src/Pretty.php",
-            "src/Plain.php"
+            "src/Plain.php",
+            "src/Json.php"
         ],
         "psr-4": {
             "Craftworks\\GenDiff\\Tests\\": "tests"

@@ -10,6 +10,7 @@ class GenDiffTest extends \PHPUnit\Framework\TestCase
         $expected2 = file_get_contents('tests/fixtures/expected2.txt');
         $expected3 = file_get_contents('tests/fixtures/expected3.txt');
         $expected4 = file_get_contents('tests/fixtures/expected4.txt');
+        $expected5 = file_get_contents('tests/fixtures/expected5.json');
         $this->assertEquals(\Craftworks\GenDiff\compare(
             'tests/fixtures/before1.json',
             'tests/fixtures/after1.json'
@@ -35,5 +36,10 @@ class GenDiffTest extends \PHPUnit\Framework\TestCase
             'tests/fixtures/after3.json',
             'plain'
         ), $expected4);
+        $this->assertEquals(\Craftworks\GenDiff\compare(
+            'tests/fixtures/before3.json',
+            'tests/fixtures/after3.json',
+            'json'
+        ), $expected5);
     }
 }
