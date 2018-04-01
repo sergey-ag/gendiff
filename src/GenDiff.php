@@ -55,11 +55,11 @@ function getNode($key, $data1, $data2)
 {
     if (!key_exists($key, $data1)) {
         return ['type' => 'added', 'key' => $key,
-                'afterValue' => getNodeValue($data2[$key])];
+                'afterValue' => $data2[$key]];
     }
     if (!key_exists($key, $data2)) {
         return ['type' => 'removed', 'key' => $key,
-                'beforeValue' => getNodeValue($data1[$key])];
+                'beforeValue' => $data1[$key]];
     }
     if (is_object($data1[$key]) && is_object($data2[$key])) {
         return ['type' => 'nested', 'key' => $key, 'afterValue' => buildDiff($data1[$key], $data2[$key])];
@@ -68,11 +68,6 @@ function getNode($key, $data1, $data2)
         return ['type' => 'equal', 'key' => $key, 'afterValue' => $data2[$key]];
     }
     return ['type' => 'changed', 'key' => $key,
-            'beforeValue' => getNodeValue($data1[$key]),
-            'afterValue' => getNodeValue($data2[$key])];
-}
-
-function getNodeValue($value)
-{
-    return is_object($value) ? buildDiff($value, $value) : $value;
+            'beforeValue' => $data1[$key],
+            'afterValue' => $data2[$key]];
 }
